@@ -1,19 +1,75 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>My Valentine</title>
 </head>
-<body style="text-align:center; font-family:Arial; margin-top:100px;">
-  <h1>Will you be my Valentine? 💖</h1>
 
-  <button onclick="alert('YAY!!! ❤️')"
-    style="font-size:20px; padding:10px 20px;">
-    Yes
-  </button>
+<body style="margin:0; font-family: Arial, sans-serif; background:#fff7fb;">
+  <div style="max-width:900px; margin:0 auto; padding:32px; text-align:center; position:relative;">
 
-  <button onclick="alert('Nice try 😄')"
-    style="font-size:20px; padding:10px 20px; margin-left:20px;">
-    Obviously Yes
-  </button>
+    <h1 style="font-size:42px; margin:40px 0 20px;">
+      Mehar, will you be my Valentine? ❤️
+    </h1>
+
+    <div style="position:relative; height:140px; margin-top:30px;">
+      <button
+        onclick="sayYes()"
+        style="
+          font-size:34px;
+          padding:18px 36px;
+          border:none;
+          border-radius:18px;
+          cursor:pointer;
+          box-shadow:0 10px 22px rgba(0,0,0,0.12);
+        "
+      >
+        YES 💖
+      </button>
+
+      <button
+        id="noBtn"
+        style="
+          font-size:14px;
+          padding:8px 12px;
+          border:1px solid rgba(0,0,0,0.25);
+          border-radius:12px;
+          cursor:pointer;
+          background:white;
+          position:absolute;
+          left:60%;
+          top:50%;
+        "
+      >
+        no
+      </button>
+    </div>
+
+    <div id="msg" style="margin-top:28px; font-size:22px;"></div>
+  </div>
+
+  <script>
+    function sayYes() {
+      document.getElementById("msg").textContent =
+        "YAY!!! I love you ❤️";
+    }
+
+    const noBtn = document.getElementById("noBtn");
+
+    function moveButton() {
+      const maxX = window.innerWidth - noBtn.offsetWidth - 20;
+      const maxY = window.innerHeight - noBtn.offsetHeight - 20;
+
+      const x = Math.random() * maxX;
+      const y = Math.random() * maxY;
+
+      noBtn.style.left = x + "px";
+      noBtn.style.top = y + "px";
+    }
+
+    noBtn.addEventListener("mouseover", moveButton);
+    noBtn.addEventListener("touchstart", moveButton);
+  </script>
 </body>
 </html>
