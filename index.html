@@ -6,8 +6,8 @@
   <title>My Valentine</title>
 </head>
 
-<body style="margin:0; font-family: Arial, sans-serif; background:#fff7fb;">
-  <div style="max-width:900px; margin:0 auto; padding:32px; text-align:center; position:relative;">
+<body style="margin:0; font-family: Arial, sans-serif; background:#fff7fb; overflow:hidden;">
+  <div style="max-width:900px; margin:0 auto; padding:32px; text-align:center; position:relative; z-index:1;">
 
     <h1 style="font-size:42px; margin:40px 0 20px;">
       Mehar, will you be my Valentine? ❤️
@@ -49,10 +49,12 @@
     <div id="msg" style="margin-top:28px; font-size:22px;"></div>
   </div>
 
+  <canvas id="fx" style="position:fixed; inset:0; z-index:0; pointer-events:none;"></canvas>
+
   <script>
     function sayYes() {
-      document.getElementById("msg").textContent =
-        "YAY!!! I love you ❤️";
+      document.getElementById("msg").textContent = "YAY!!! I love you ❤️";
+      fireworksBurst();
     }
 
     const noBtn = document.getElementById("noBtn");
@@ -70,6 +72,78 @@
 
     noBtn.addEventListener("mouseover", moveButton);
     noBtn.addEventListener("touchstart", moveButton);
+
+    // Fireworks (confetti-like burst) on canvas
+    const canvas = document.getElementById("fx");
+    const ctx = canvas.getContext("2d");
+    let particles = [];
+    let animating = false;
+
+    function resize() {
+      canvas.width = window.innerWidth;
+      canvas.height = window.innerHeight;
+    }
+    window.addEventListener("resize", resize);
+    resize();
+
+    function rand(min, max) {
+      return Math.random() * (max - min) + min;
+    }
+
+    function fireworksBurst() {
+      const bursts = 4; // how many "fireworks"
+      for (let b = 0; b < bursts; b++) {
+        const cx = rand(canvas.width * 0.2, canvas.width * 0.8);
+        const cy = rand(canvas.height * 0.15, canvas.height * 0.45);
+        const count = 80;
+
+        for (let i = 0; i < count; i++) {
+          const angle = rand(0, Math.PI * 2);
+          const speed = rand(2, 7);
+          particles.push({
+            x: cx,
+            y: cy,
+            vx: Math.cos(angle) * speed,
+            vy: Math.sin(angle) * speed,
+            life: rand(50, 90),
+            size: rand(1.5, 3.5),
+            hue: rand(0, 360)
+          });
+        }
+      }
+
+      if (!animating) {
+        animating = true;
+        requestAnimationFrame(tick);
+      }
+    }
+
+    function tick() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+
+      particles = particles.filter(p => p.life > 0);
+
+      for (const p of particles) {
+        p.x += p.vx;
+        p.y += p.vy;
+        p.vy += 0.06;      // gravity
+        p.vx *= 0.99;      // drag
+        p.vy *= 0.99;      // drag
+        p.life -= 1;
+
+        ctx.beginPath();
+        ctx.fillStyle = `hsla(${p.hue}, 90%, 60%, ${Math.min(1, p.life / 40)})`;
+        ctx.arc(p.x, p.y, p.size, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      if (particles.length > 0) {
+        requestAnimationFrame(tick);
+      } else {
+        animating = false;
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+      }
+    }
   </script>
 </body>
 </html>
